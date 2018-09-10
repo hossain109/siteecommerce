@@ -1,0 +1,8 @@
+<div class="well">
+    <ul class="nav nav-list">
+        <li class="nav-header">Nos produits</li>
+{%for categorie in categories%}
+        <li><a href="{{path('categoriProduits', {'categorie': categorie.id})}}">{{categorie.nom}}</a></li>
+{%endfor%}
+    </ul>
+</div>

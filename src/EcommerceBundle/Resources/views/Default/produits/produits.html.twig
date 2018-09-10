@@ -1,0 +1,38 @@
+{% extends "layout/layout.html.twig" %}
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="span3">
+                {% render(controller('EcommerceBundle:Categorie:menu')) %}
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    {% include 'UserBundle:Default:modelUsed/myuserConnecte.html.twig'%}
+                    {% render(controller('EcommerceBundle:Panier:menu')) %}
+                {% else  %}
+                {% include('UserBundle:Default:modelUsed/myuser.html.twig') %}
+                {% endif %}
+            </div>
+            <div class="span9">
+                <ul class="thumbnails">
+                    {% if produits|length != null %}
+                    {% for produit in produits %}
+                        <li class="span3">
+                            <div class="thumbnail">
+                                <img src="{{produit.image.path}}" alt="{{produit.image.alt}}" width="300" height="150">
+                                <div class="caption">
+                                    <h4>{{produit.nom}}</h4>
+                                    <p>{{produit.prix}} € &nbsp; &nbsp; &nbsp;{{produit.disponible}}</p>                          
+                                    <a href="{{path('presentation', {'id' : produit.id})}}" class="btn btn-primary">Plus d'Info</a>
+                                    <a href="{{path('ajouter', {'id' : produit.id})}}" class="btn btn-primary">Ajouter au Panier</a>
+                                </div>
+                            </div>       
+                        </li>
+
+                    {%endfor%}
+                    {% else %}
+                        <h2>Aucun Produits</h2>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

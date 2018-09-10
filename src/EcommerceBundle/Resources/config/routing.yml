@@ -1,0 +1,39 @@
+produits:
+    path:     /
+    defaults: { _controller: EcommerceBundle:Produits:produits }
+    
+presentation:
+    path:     /presentation/{id}
+    defaults: { _controller: EcommerceBundle:Produits:presentation }
+    
+categorie:
+    path:     /categorie
+    defaults: { _controller: EcommerceBundle:Categorie:menu }
+    
+categoriProduits:
+    path:     /categorie/{categorie}
+    defaults: { _controller: EcommerceBundle:Categorie:categorie }
+    
+recherche:
+    path:     /recherche
+    defaults: { _controller: EcommerceBundle:Produits:recherche }
+
+recherchePoduits:
+    path:     /recherche/traitement
+    defaults: { _controller: EcommerceBundle:Produits:rechercheTraithement }
+    
+panier:
+    path:   /panier
+    defaults: { _controller: EcommerceBundle:Panier:panier }
+    
+ajouter:
+    path: /ajouter/{id}
+    defaults: { _controller: EcommerceBundle:Panier:ajouter }
+    
+suprimer:
+    path: /suprimer/{id}
+    defaults: { _controller: EcommerceBundle:Panier:suprimer }
+    
+panierMenu:
+    path: /panier/menu
+    defaults: { _controller: EcommerceBundle:Panier:menu }

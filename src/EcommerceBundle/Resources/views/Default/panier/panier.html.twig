@@ -1,0 +1,82 @@
+{% extends "layout/layout.html.twig" %}
+{% block body %}
+    {%set totalHT =0 %}
+    {%set totalTTC=0%}
+    {%set refTva={} %}
+
+    {% for produit in produits %}
+        {%set refTva = refTva|merge({ ('%' ~ produit.Tva.valeur) : 0 })%}
+    {% endfor %}
+
+    <div class="container">
+        <div class="row">
+            <div class="span3">
+                {% render(controller('EcommerceBundle:Categorie:menu')) %}
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    {% include 'UserBundle:Default:modelUsed/myuserConnecte.html.twig'%}
+                    {% render(controller('EcommerceBundle:panier:menu')) %}
+                {% else  %}
+                    {% include('UserBundle:Default:modelUsed/myuser.html.twig') %}
+                {% endif %}
+            </div>
+            <div class="span9">
+                {% if app.session.flashBag.has('success') %}
+                    <div class="alert alert-success">
+                        {% for msg in app.session.flashBag.get('success') %}
+                            {{ msg }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <table class="table table-striped table-hover"  >
+                    <thead>
+                        <tr>
+                            <th>Nom produit</th>
+                            <th>Quantité</th>
+                            <th>Prix unitaire</th>
+                            <th>Total HT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if produits|length==0 %}
+                            <tr><td colspan="4" ><center>Aucun produit dans votre panier</center></td></tr>
+                        {%endif%}
+                        {% for produit in produits %}
+                        <tr>
+                        <form action="{{path('ajouter',{'id': produit.id}) }}" method="get">
+                            <td>{{produit.nom}}</td>
+                            <td>
+                                <select name="qte" class="span1" onChange="this.form.submit()">
+                                    {% for i in 1..10 %}
+                                        <option value="{{i}}" {% if i==panier[produit.id] %}selected = "selected" {% endif %}>{{i}}</option>                     
+                                        <i class="icon-trash"></i>
+                                    {% endfor %}
+                                </select>
+                                <a href="{{path('suprimer',{'id': produit.id}) }}"><i class="icon-trash"></i></a>
+                            </td>
+
+                            <td>{{produit.prix}} €</td>
+                            <td>{{ panier[produit.id]*produit.prix }}</td>
+                        </form>
+                        </tr>
+                        {% set totalHT = totalHT + (produit.prix * panier[produit.id]) %}
+                        {% set totalTTC = totalTTC +( produit.prix * panier[produit.id]) | tva(produit.tva.multiplicate) %}
+                        {%set refTva = refTva |merge({ ('%' ~ produit.tva.valeur) : refTva['%' ~ produit.tva.valeur] + (produit.prix * panier[produit.id])|montantTva(produit.tva.multiplicate) }) %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {%if produits|length !=0%}
+                    <dl class="dl-horizontal pull-right">
+                        <dt>Total HT :</dt><dd>{{totalHT}}€</dd>
+                        {% for key, tva  in refTva %}
+                            <dt> {{key}}:</dt><dd>{{tva}}</dd> 
+                        {% endfor %}
+                        <dt>Total:</dt> <dd>{{totalTTC}}€</dd>
+                    </dl>
+                    <div class="clearfix"></div>
+                    <a href="#" class="btn btn-success pull-right">Valider mon panier</a>
+                {%endif%}
+                <a href="{{path('produits')}}" class="btn btn-primary">Continuer mes achats</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
